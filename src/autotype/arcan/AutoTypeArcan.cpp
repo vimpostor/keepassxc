@@ -35,7 +35,7 @@ bool AutoTypePlatformArcan::isAvailable()
 
 QStringList AutoTypePlatformArcan::windowTitles()
 {
-    return {m_windowtitle};
+    return {activeWindowTitle()};
 }
 
 WId AutoTypePlatformArcan::activeWindow()
