@@ -40,6 +40,7 @@
 #ifdef WITH_X11
 #include "autotype/xcb/AutoTypeXCB.h"
 #endif
+#include "autotype/arcan/AutoTypeArcan.h"
 #include "autotype/wayland/AutoTypeWayland.h"
 #elif defined(Q_OS_MACOS)
 #include "autotype/mac/AutoTypeMac.h"
@@ -163,12 +164,18 @@ AutoType::AutoType(QObject* parent, bool test)
             } else {
                 m_platform = new AutoTypePlatformX11();
             }
+        } else if (platformName == "arcan") {
+            m_platform = new AutoTypePlatformArcan();
         } else {
             m_platform = new AutoTypePlatformWayland();
         }
 #else
         Q_UNUSED(platformName);
-        m_platform = new AutoTypePlatformWayland();
+        if (platformName == "arcan") {
+            m_platform = new AutoTypePlatformArcan();
+        } else {
+            m_platform = new AutoTypePlatformWayland();
+        }
 #endif
 #elif defined(Q_OS_MACOS)
         m_platform = new AutoTypePlatformMac();
@@ -426,6 +433,9 @@ void AutoType::startGlobalAutoType(const QString& search)
 
     m_windowForGlobal = m_platform->activeWindow();
     m_windowTitleForGlobal = m_platform->activeWindowTitle();
+
+    // abuse the search parameter to pass the window title
+    m_windowTitleForGlobal = search;
 #ifdef Q_OS_MACOS
     // Determine if the user has given proper permissions to KeePassXC to perform Auto-Type
     static bool accessibilityChecked = false;

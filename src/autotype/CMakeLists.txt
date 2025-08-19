@@ -29,6 +29,10 @@ if(UNIX AND NOT APPLE AND NOT HAIKU)
         list(APPEND autotype_SOURCES
                 xcb/AutoTypeXCB.cpp)
     endif()
+
+	pkg_check_modules(arcan-shmif REQUIRED IMPORTED_TARGET arcan-shmif)
+	find_package(Qt6 CONFIG REQUIRED COMPONENTS GuiPrivate)
+	list(APPEND autotype_SOURCES arcan/AutoTypeArcan.cpp)
 elseif(APPLE)
     list(APPEND autotype_SOURCES
             mac/AutoTypeMac.cpp)
@@ -45,6 +49,8 @@ if(UNIX AND NOT APPLE AND NOT HAIKU)
     if(WITH_X11)
         target_link_libraries(autotype ${X11_X11_LIB} ${X11_Xi_LIB} ${X11_XTest_LIB})
     endif()
+
+	target_link_libraries(autotype Qt::GuiPrivate PkgConfig::arcan-shmif)
 elseif(APPLE)
     target_link_libraries(autotype "-framework Foundation" "-framework AppKit" "-framework Carbon" "-framework ScreenCaptureKit")
 endif()
