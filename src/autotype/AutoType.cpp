@@ -398,13 +398,19 @@ void AutoType::performAutoTypeWithSequence(const Entry* entry, const QString& se
 
 void AutoType::startGlobalAutoType(const QString& search)
 {
+#if 0 // does not matter in Arcan, autotype will always affect the correct window
     // Never Auto-Type into KeePassXC itself
     if (getMainWindow() && (qApp->activeWindow() || qApp->activeModalWidget())) {
         return;
     }
+#endif
 
     m_windowForGlobal = m_plugin->activeWindow();
     m_windowTitleForGlobal = m_plugin->activeWindowTitle();
+
+    // the autotype plugins live in a separate process, so we just abuse the search parameter to pass the window title
+    m_windowTitleForGlobal = search;
+
 #ifdef Q_OS_MACOS
     // Determine if the user has given proper permissions to KeePassXC to perform Auto-Type
     static bool accessibilityChecked = false;
@@ -434,7 +440,12 @@ void AutoType::startGlobalAutoType(const QString& search)
     }
 #endif
 
+#if 1
+    // search is unused anyway
+    emit globalAutoTypeTriggered("");
+#else
     emit globalAutoTypeTriggered(search);
+#endif
 }
 
 /**

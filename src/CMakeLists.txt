@@ -354,6 +354,10 @@ target_link_libraries(keepassxc_gui
         ${keeshare_LIB}
         ${sshagent_LIB})
 
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(arcan-shmif REQUIRED IMPORTED_TARGET arcan-shmif)
+target_link_libraries(keepassxc_gui PkgConfig::arcan-shmif)
+
 if(APPLE)
     target_link_libraries(keepassxc_gui "-framework Foundation -framework AppKit -framework Carbon -framework Security -framework LocalAuthentication -framework ScreenCaptureKit")
     if(Qt6MacExtras_FOUND)

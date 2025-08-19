@@ -88,6 +88,8 @@ private:
 
     void setColorScheme(QDBusVariant value);
 
+    QString m_windowtag;
+
     Q_DISABLE_COPY(NixUtils)
 };
 

@@ -37,6 +37,10 @@
 #include <X11/XKBlib.h>
 #include <xcb/xproto.h>
 
+extern "C" {
+#include <arcan_shmif.h>
+}
+
 namespace
 {
     Display* dpy;
@@ -248,8 +252,22 @@ void NixUtils::registerNativeEventFilter()
 
 bool NixUtils::nativeEventFilter(const QByteArray& eventType, void* message, qintptr* result)
 {
-    Q_UNUSED(result)
-#ifdef WITH_X11
+    if (eventType == QByteArrayLiteral("arcan_event")) {
+        auto* ev = static_cast<arcan_event*>(message);
+        if (ev->category == EVENT_TARGET && ev->tgt.kind == TARGET_COMMAND_MESSAGE) {
+            const auto msg = QByteArray(ev->tgt.message);
+            m_windowtag += msg;
+            const bool multipart = ev->tgt.ioevs[0].iv;
+            if (!multipart) {
+                emit globalShortcutTriggered("autotype", m_windowtag);
+                m_windowtag.clear();
+            }
+            return true;
+        }
+    }
+
+	Q_UNUSED(result)
+#ifdef WITH_XC_X11
     if (eventType != QByteArrayLiteral("xcb_generic_event_t")) {
         return false;
     }
