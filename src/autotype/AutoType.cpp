@@ -426,10 +426,12 @@ void AutoType::startGlobalAutoType(const QString& search)
         return;
     }
 
+#if 0 // does not matter in Arcan, autotype will always affect the correct window
     // Never Auto-Type into KeePassXC itself
     if (getMainWindow() && (qApp->activeWindow() || qApp->activeModalWidget())) {
         return;
     }
+#endif
 
     m_windowForGlobal = m_platform->activeWindow();
     m_windowTitleForGlobal = m_platform->activeWindowTitle();
@@ -465,7 +467,12 @@ void AutoType::startGlobalAutoType(const QString& search)
     }
 #endif
 
+#if 1
+    // search is unused anyway
+    emit globalAutoTypeTriggered("");
+#else
     emit globalAutoTypeTriggered(search);
+#endif
 }
 
 /**
