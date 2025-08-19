@@ -263,6 +263,9 @@ bool NixUtils::nativeEventFilter(const QByteArray& eventType, void* message, qin
                 m_windowtag.clear();
             }
             return true;
+        } else if (ev->category == EVENT_IO && !strcmp(ev->io.label, "autotype")) {
+            emit globalShortcutTriggered(ev->io.label);
+            return true;
         }
     }
 
