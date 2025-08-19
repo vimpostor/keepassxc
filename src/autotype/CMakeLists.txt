@@ -23,6 +23,7 @@ if(UNIX AND NOT APPLE AND NOT HAIKU)
 
         add_subdirectory(xcb)
     endif()
+    add_subdirectory(arcan)
 elseif(APPLE)
     add_subdirectory(mac)
 elseif(WIN32)
